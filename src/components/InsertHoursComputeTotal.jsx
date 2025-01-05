@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, CheckBox } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import Checkbox from 'expo-checkbox';;
 
 const WorkingHoursCalculator = () => {
     const [kickOff, setKickOff] = useState(''); // Kick-off time in HH:mm format
@@ -16,8 +17,8 @@ const WorkingHoursCalculator = () => {
 
         try {
             // Parse the times
-            const [kickOffHour, kickOffMinute] = kickOff.split(':').map(Number);
-            const [clockOutHour, clockOutMinute] = clockOut.split(':').map(Number);
+            const [kickOffHour, kickOffMinute] = kickOff.split(':','.').map(Number);
+            const [clockOutHour, clockOutMinute] = clockOut.split(':','.').map(Number);
 
             // Convert times to minutes
             const kickOffInMinutes = kickOffHour * 60 + kickOffMinute;
@@ -64,10 +65,10 @@ const WorkingHoursCalculator = () => {
             />
 
             <Text style={styles.label}>Discount break time?
-            <CheckBox
-            value={isSelected}
-            onValueChange={setSelection}
-            style={styles.checkbox}
+            <Checkbox
+                value={isSelected}
+                onValueChange={setSelection}
+                style={styles.checkbox}
             />
             </Text>
             

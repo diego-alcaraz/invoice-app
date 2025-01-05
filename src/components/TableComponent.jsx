@@ -1,6 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+const users = [
+  { Date: '01/01/2025', Place: 'Alice St', KickOff: '6:00', ClockOut: '14:00', BreakHours: '1', TotaHours: '7' },
+  { Date: '02/01/2025', Place: 'Alice St', KickOff: '6:30', ClockOut: '14:00', BreakHours: '1', TotaHours: '7' },
+  { Date: '03/01/2025', Place: 'Alice St', KickOff: '7:00', ClockOut: '14:00', BreakHours: '1', TotaHours: '7' },
+  { Date: '04/01/2025', Place: 'Alice St', KickOff: '6:45', ClockOut: '14:00', BreakHours: '1', TotaHours: '7' },
+];
+
+// {/* <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', margin: 16 }}>
+// Traiding Hours
+// </Text>
+// <UserTable users={users} /> */}
+
+
 const UserTable = ({ users }) => {
     return (
         <View style={styles.container}>
