@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default UserTable;
+export default UserTable({ users });

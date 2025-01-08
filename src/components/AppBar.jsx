@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Appbar } from 'react-native-paper';
 import { StyleSheet, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Use navigation hook
+import { useNavigation } from '@react-navigation/native'; 
 
-const AppBarTab = ({ active, children, to }) => {
-  const navigation = useNavigation(); // Access the navigation object
+const AppBarTab = ({ active, icon, to }) => {
+  const navigation = useNavigation(); // Use useNavigation hook to get the navigation object
 
   return (
     <Appbar.Action
-      icon={children}
+      icon={icon} // Pass valid icon name
       onPress={() => navigation.navigate(to)} // Navigate to the passed screen
     />
   );
@@ -20,17 +20,11 @@ const AppBar = () => (
       icon={() => (
         <Image source={require('../icon/LogoM.jpg')} style={styles.image} />
       )}
-      onPress={() => console.log('Image pressed')}
+      onPress={() => navigation.navigate('Home')}
     />
-    <AppBarTab active={true} to="Profile">
-      {"account"}
-    </AppBarTab>
-    <AppBarTab to="Details">
-      {"view-list-outline"}
-    </AppBarTab>
-    <AppBarTab to="Settings">
-      {"strategy"}
-    </AppBarTab>
+    <AppBarTab active={true} to="Profile" icon="account" />
+    <AppBarTab to="Details" icon="view-list-outline" />
+    <AppBarTab to="Settings" icon="cog-outline" />
   </Appbar>
 );
 
@@ -42,6 +36,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: '#2f2c33',
   },
 
   image: {

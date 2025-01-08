@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, ImageBackground, Dimensions } from 'react-nativ
 const HomeScreen = () => {
   return (
     <ImageBackground
-      source={require('../icon/BackGround.jpeg')} // Path to your logo image
+      source={require('../icon/ColdBottle_bg.jpg')} // Path to your logo image
       style={styles.background}
       resizeMode="cover" // Ensures the image covers the entire screen
     >
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent overlay for better readability
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     padding: 20,
     borderRadius: 10,
   },

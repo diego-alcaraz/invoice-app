@@ -1,24 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Main from './src/components/Main.jsx';
-import UserTable  from './src/components/TableComponent.jsx';
-import WorkingHoursCalculator from './src/components/InsertHoursComputeTotal.jsx';
-import AppBar from './src/components/AppBar.jsx';
-import HomeScreen from './src/screens/HomeScreen.js';
+import * as React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import Main from './src/components/Main';
 
-export default function App() {
+const App = () => {
   return (
-    <>
-      <HomeScreen />
-      <AppBar />
-    </>
+    <Main />
   );
-} 
+};
+
+
+export default App;
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
