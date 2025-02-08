@@ -1,11 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text,Dimensions,StatusBar, FlatListComponent, ViewBase } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { PaperProvider } from 'react-native-paper';
-import AppBar from './src/components/AppBar';  // adjust path as needed
-import Main from './src/components/Main';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import AppBar from './src/components/AppBar';
 import HomeScreen from './src/screens/HomeScreen';
+import InvoiceScreen from './src/screens/InvoiceScreen';
+
+import LoginScreen from './src/components/Login';
+
 
 
 
@@ -13,27 +18,46 @@ const Tab = createBottomTabNavigator();
 
 // Example screen components - replace these with your actual screens
 const Home = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  <View style={{...styles.container, backgroundColor: 'lighgray'}}>
     <HomeScreen/>
   </View>
 );
 
 const ProfileScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Profile Screen</Text>
-  </View>
+  <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
+      <LoginScreen/>
+    </View>
+  </SafeAreaView>
 );
 
 const DetailsScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Details Screen</Text>
-  </View>
+  <SafeAreaView style={styles.safeArea}>
+    <View>
+        <InvoiceScreen/>
+    </View>
+  </SafeAreaView>
 );
 
 const SettingsScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Settings Screen</Text>
-  </View>
+  <SafeAreaView style={styles.safeArea}> 
+    <View style={{flex:1, backgroundColor: 'gray'}}>
+
+      <View style={{...styles.container, backgroundColor: 'orange'}}>
+        <Text> Setting Screen 1 Top</Text>
+      </View>
+
+      <View style={{flex:1, flexDirection: 'row'}}>
+        <View style={{...styles.container, flex:2, backgroundColor:'lightblue'}}>
+          <Text> Setting Screen 1 Bottom</Text>
+        </View>
+        <View style={{...styles.container, flex:1, backgroundColor: 'lightgreen'}}>
+          <Text> Setting Screen 2 Bottom</Text>
+        </View>
+      </View>
+
+    </View>
+  </SafeAreaView>
 );
 
 export default function App() {
@@ -58,9 +82,19 @@ export default function App() {
 
 
 const styles = StyleSheet.create({
-  screen: {
+  safeArea: {
+    flex: 1,
+    padding:10,
+  },
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'lightblue',
+  },
+  centrar : {
+    flex: 1,
+    justifyContent: 'center', 
+    alignItems: 'center'
   },
 });

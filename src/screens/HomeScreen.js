@@ -1,20 +1,23 @@
 import React from 'react';
-import { StyleSheet, View, Text, ImageBackground, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, ImageBackground, Dimensions, StatusBar, SafeAreaView } from 'react-native';
+
 
 const HomeScreen = () => {
   return (
-    <ImageBackground
-      source={require('../icon/ColdBottle_bg.jpg')} // Path to your logo image
-      style={styles.background}
-      resizeMode="cover" // Ensures the image covers the entire screen
-    >
-      <View style={styles.overlay}>
-        <Text style={styles.title}>Welcome to InvoiceApp</Text>
-        <Text style={styles.description}>
-          Easily track your daily work hours and generate weekly summaries with GPS support.
-        </Text>
-      </View>
-    </ImageBackground>
+    <SafeAreaView style={{ flex: 1 }}>  
+      <ImageBackground
+        source={require('../icon/ColdBottle_bg.jpg')} 
+        style={styles.background }
+        resizeMode="cover" 
+      >
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Welcome to InvoiceApp</Text>
+          <Text style={styles.description}>
+            Easily track your daily work hours and generate weekly summaries with GPS support.
+          </Text>
+        </View>
+      </ImageBackground>
+    </SafeAreaView>
   );
 };
 
@@ -23,11 +26,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    width: Dimensions.get('window').width,
+    width:  Dimensions.get('window').width,
     height: Dimensions.get('window').height,
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgba(171, 171, 171, 0.75)',
     padding: 20,
     borderRadius: 10,
   },
