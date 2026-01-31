@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { FAB, List, Text, Divider } from 'react-native-paper'
 import { useFocusEffect } from '@react-navigation/native'
 import { supabase } from '../lib/supabase'
@@ -34,7 +35,7 @@ export default function ClientsScreen ({ navigation }) {
   )
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Text variant='headlineMedium' style={styles.title}>Clients</Text>
       <FlatList
         data={clients}
@@ -44,7 +45,7 @@ export default function ClientsScreen ({ navigation }) {
         ListEmptyComponent={<Text style={styles.empty}>No clients yet. Tap + to add one.</Text>}
       />
       <FAB icon='plus' style={styles.fab} onPress={() => navigation.navigate('ClientForm', {})} />
-    </View>
+    </SafeAreaView>
   )
 }
 

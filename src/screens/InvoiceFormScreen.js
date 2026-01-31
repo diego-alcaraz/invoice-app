@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, ScrollView, Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { TextInput, Button, Text, Menu, IconButton } from 'react-native-paper'
 import { Formik, FieldArray } from 'formik'
 import { supabase } from '../lib/supabase'
@@ -93,89 +94,91 @@ export default function InvoiceFormScreen ({ navigation }) {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text variant='headlineMedium' style={styles.title}>New Invoice</Text>
-      <Formik
-        initialValues={{ client_id: '', client_name: '', invoice_number: '', items: [{ ...emptyItem }] }}
-        onSubmit={handleSave}
-      >
-        {({ handleChange, handleSubmit, values, setFieldValue }) => {
-          const { subtotal, tax, total } = calcTotals(values.items)
-          return (
-            <View>
-              <Menu
-                visible={menuVisible}
-                onDismiss={() => setMenuVisible(false)}
-                anchor={
-                  <Button mode='outlined' onPress={() => setMenuVisible(true)} style={styles.input}>
-                    {values.client_name || 'Select Client'}
-                  </Button>
-                }
-              >
-                {clients.map(c => (
-                  <Menu.Item
-                    key={c.id}
-                    title={c.company_name}
-                    onPress={() => {
-                      setFieldValue('client_id', c.id)
-                      setFieldValue('client_name', c.company_name)
-                      setMenuVisible(false)
-                    }}
-                  />
-                ))}
-              </Menu>
-
-              <TextInput
-                label='Invoice Number'
-                mode='outlined'
-                value={values.invoice_number}
-                onChangeText={handleChange('invoice_number')}
-                style={styles.input}
-              />
-
-              <FieldArray name='items'>
-                {({ push, remove }) => (
-                  <View>
-                    <Text variant='titleMedium' style={styles.sectionTitle}>Line Items</Text>
-                    {values.items.map((item, index) => (
-                      <View key={index} style={styles.lineItem}>
-                        <View style={styles.lineHeader}>
-                          <Text variant='labelLarge'>Item {index + 1}</Text>
-                          {values.items.length > 1 && (
-                            <IconButton icon='delete' size={20} onPress={() => remove(index)} />
-                          )}
-                        </View>
-                        <TextInput label='Date' mode='outlined' value={item.date} onChangeText={handleChange(`items.${index}.date`)} style={styles.input} placeholder='DD/MM/YYYY' />
-                        <TextInput label='Task' mode='outlined' value={item.task} onChangeText={handleChange(`items.${index}.task`)} style={styles.input} placeholder='e.g. Website Redesign' />
-                        <TextInput label='Description' mode='outlined' value={item.description} onChangeText={handleChange(`items.${index}.description`)} style={styles.input} multiline placeholder='Details about the work done' />
-                        <View style={styles.row}>
-                          <TextInput label='Hours' mode='outlined' value={item.hours} onChangeText={handleChange(`items.${index}.hours`)} style={[styles.input, styles.half]} keyboardType='numeric' />
-                          <TextInput label='Rate ($)' mode='outlined' value={item.rate} onChangeText={handleChange(`items.${index}.rate`)} style={[styles.input, styles.half]} keyboardType='numeric' />
-                        </View>
-                        <Text style={styles.lineTotal}>Line Total: ${calcLineTotal(item).toFixed(2)}</Text>
-                      </View>
-                    ))}
-                    <Button mode='outlined' icon='plus' onPress={() => push({ ...emptyItem })} style={styles.addButton}>
-                      Add Line Item
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text variant='headlineMedium' style={styles.title}>New Invoice</Text>
+        <Formik
+          initialValues={{ client_id: '', client_name: '', invoice_number: '', items: [{ ...emptyItem }] }}
+          onSubmit={handleSave}
+        >
+          {({ handleChange, handleSubmit, values, setFieldValue }) => {
+            const { subtotal, tax, total } = calcTotals(values.items)
+            return (
+              <View>
+                <Menu
+                  visible={menuVisible}
+                  onDismiss={() => setMenuVisible(false)}
+                  anchor={
+                    <Button mode='outlined' onPress={() => setMenuVisible(true)} style={styles.input}>
+                      {values.client_name || 'Select Client'}
                     </Button>
-                  </View>
-                )}
-              </FieldArray>
+                  }
+                >
+                  {clients.map(c => (
+                    <Menu.Item
+                      key={c.id}
+                      title={c.company_name}
+                      onPress={() => {
+                        setFieldValue('client_id', c.id)
+                        setFieldValue('client_name', c.company_name)
+                        setMenuVisible(false)
+                      }}
+                    />
+                  ))}
+                </Menu>
 
-              <View style={styles.totals}>
-                <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
-                <Text>GST (10%): ${tax.toFixed(2)}</Text>
-                <Text variant='titleLarge' style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
+                <TextInput
+                  label='Invoice Number'
+                  mode='outlined'
+                  value={values.invoice_number}
+                  onChangeText={handleChange('invoice_number')}
+                  style={styles.input}
+                />
+
+                <FieldArray name='items'>
+                  {({ push, remove }) => (
+                    <View>
+                      <Text variant='titleMedium' style={styles.sectionTitle}>Line Items</Text>
+                      {values.items.map((item, index) => (
+                        <View key={index} style={styles.lineItem}>
+                          <View style={styles.lineHeader}>
+                            <Text variant='labelLarge'>Item {index + 1}</Text>
+                            {values.items.length > 1 && (
+                              <IconButton icon='delete' size={20} onPress={() => remove(index)} />
+                            )}
+                          </View>
+                          <TextInput label='Date' mode='outlined' value={item.date} onChangeText={handleChange(`items.${index}.date`)} style={styles.input} placeholder='DD/MM/YYYY' />
+                          <TextInput label='Task' mode='outlined' value={item.task} onChangeText={handleChange(`items.${index}.task`)} style={styles.input} placeholder='e.g. Website Redesign' />
+                          <TextInput label='Description' mode='outlined' value={item.description} onChangeText={handleChange(`items.${index}.description`)} style={styles.input} multiline placeholder='Details about the work done' />
+                          <View style={styles.row}>
+                            <TextInput label='Hours' mode='outlined' value={item.hours} onChangeText={handleChange(`items.${index}.hours`)} style={[styles.input, styles.half]} keyboardType='numeric' />
+                            <TextInput label='Rate ($)' mode='outlined' value={item.rate} onChangeText={handleChange(`items.${index}.rate`)} style={[styles.input, styles.half]} keyboardType='numeric' />
+                          </View>
+                          <Text style={styles.lineTotal}>Line Total: ${calcLineTotal(item).toFixed(2)}</Text>
+                        </View>
+                      ))}
+                      <Button mode='outlined' icon='plus' onPress={() => push({ ...emptyItem })} style={styles.addButton}>
+                        Add Line Item
+                      </Button>
+                    </View>
+                  )}
+                </FieldArray>
+
+                <View style={styles.totals}>
+                  <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
+                  <Text>GST (10%): ${tax.toFixed(2)}</Text>
+                  <Text variant='titleLarge' style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
+                </View>
+
+                <Button mode='contained' onPress={handleSubmit} loading={loading} style={styles.button}>
+                  Save Invoice
+                </Button>
               </View>
-
-              <Button mode='contained' onPress={handleSubmit} loading={loading} style={styles.button}>
-                Save Invoice
-              </Button>
-            </View>
-          )
-        }}
-      </Formik>
-    </ScrollView>
+            )
+          }}
+        </Formik>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 

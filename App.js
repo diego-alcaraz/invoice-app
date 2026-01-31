@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, ActivityIndicator, Image } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { PaperProvider, MD3LightTheme } from 'react-native-paper'
@@ -49,8 +49,10 @@ function MainTabs () {
         tabBarInactiveTintColor: '#666',
         tabBarStyle: { paddingBottom: 6, paddingTop: 4, height: 56, backgroundColor: '#1a1a1a', borderTopColor: '#333' },
         tabBarIcon: ({ color, size }) => {
+          if (route.name === 'Home') {
+            return <Image source={require('./src/icon/LogoM.png')} style={{ width: size, height: size, borderRadius: size / 2 }} />
+          }
           const icons = {
-            Home: 'home',
             Invoices: 'file-document-outline',
             Clients: 'domain',
             Profile: 'account'

@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { View, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native'
 import { Button, Text } from 'react-native-paper'
 import * as WebBrowser from 'expo-web-browser'
-import * as AuthSession from 'expo-auth-session'
+import { makeRedirectUri } from 'expo-auth-session'
 import { supabase } from '../lib/supabase'
 
 WebBrowser.maybeCompleteAuthSession()
+
+const redirectUri = makeRedirectUri()
 
 export default function LoginScreen () {
   const [loading, setLoading] = useState(false)
@@ -13,8 +15,6 @@ export default function LoginScreen () {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      const redirectUri = AuthSession.makeRedirectUri({ useProxy: true })
-
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

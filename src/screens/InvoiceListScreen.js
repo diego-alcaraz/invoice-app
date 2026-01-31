@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { FAB, List, Text, Divider, Chip } from 'react-native-paper'
 import { useFocusEffect } from '@react-navigation/native'
 import { supabase } from '../lib/supabase'
@@ -35,7 +36,7 @@ export default function InvoiceListScreen ({ navigation }) {
   )
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Text variant='headlineMedium' style={styles.title}>Invoices</Text>
       <FlatList
         data={invoices}
@@ -45,7 +46,7 @@ export default function InvoiceListScreen ({ navigation }) {
         ListEmptyComponent={<Text style={styles.empty}>No invoices yet. Tap + to create one.</Text>}
       />
       <FAB icon='plus' style={styles.fab} onPress={() => navigation.navigate('InvoiceForm')} />
-    </View>
+    </SafeAreaView>
   )
 }
 

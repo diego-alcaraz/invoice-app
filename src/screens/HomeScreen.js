@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { View, StyleSheet, ScrollView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, Card, Button, Divider } from 'react-native-paper'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { supabase } from '../lib/supabase'
@@ -40,7 +41,8 @@ export default function HomeScreen () {
   const firstName = profile?.name?.split(' ')[0] || 'there'
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.container} edges={['top']}>
+    <ScrollView contentContainerStyle={styles.content}>
       <Text variant='headlineMedium' style={styles.greeting}>Hey {firstName} 👋</Text>
       <Text variant='bodyMedium' style={styles.subtitle}>Here's your overview</Text>
 
@@ -105,6 +107,7 @@ export default function HomeScreen () {
         ))
       }
     </ScrollView>
+    </SafeAreaView>
   )
 }
 

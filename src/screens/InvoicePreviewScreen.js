@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, ScrollView, StyleSheet, Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, Button, DataTable, Portal, Modal, Divider } from 'react-native-paper'
 import * as Print from 'expo-print'
 import * as Sharing from 'expo-sharing'
@@ -73,84 +74,86 @@ export default function InvoicePreviewScreen ({ route }) {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text variant='headlineMedium' style={styles.title}>Invoice #{invoice.invoice_number}</Text>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text variant='headlineMedium' style={styles.title}>Invoice #{invoice.invoice_number}</Text>
 
-      <View style={styles.section}>
-        <Text variant='titleSmall'>Bill To</Text>
-        <Text>{client?.company_name}</Text>
-        <Text>{client?.address}</Text>
-        <Text>{client?.email}</Text>
-      </View>
-
-      <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Date</DataTable.Title>
-          <DataTable.Title>Task</DataTable.Title>
-          <DataTable.Title numeric>Hours</DataTable.Title>
-          <DataTable.Title numeric>Rate</DataTable.Title>
-          <DataTable.Title numeric>Total</DataTable.Title>
-        </DataTable.Header>
-        {lineItems.map(item => (
-          <DataTable.Row key={item.id}>
-            <DataTable.Cell>{item.date}</DataTable.Cell>
-            <DataTable.Cell>{item.task}{item.description ? `\n${item.description}` : ''}</DataTable.Cell>
-            <DataTable.Cell numeric>{item.hours}</DataTable.Cell>
-            <DataTable.Cell numeric>${Number(item.rate).toFixed(2)}</DataTable.Cell>
-            <DataTable.Cell numeric>${Number(item.total).toFixed(2)}</DataTable.Cell>
-          </DataTable.Row>
-        ))}
-      </DataTable>
-
-      <View style={styles.totals}>
-        <Text>Subtotal: ${Number(invoice.subtotal).toFixed(2)}</Text>
-        <Text>GST (10%): ${Number(invoice.tax).toFixed(2)}</Text>
-        <Text variant='titleLarge' style={styles.totalText}>Total: ${Number(invoice.total).toFixed(2)}</Text>
-      </View>
-
-      <Button mode='contained' icon='file-pdf-box' onPress={handleGeneratePdf} style={styles.button}>
-        Generate PDF
-      </Button>
-
-      <Button mode='contained' icon='send' onPress={() => setConfirmVisible(true)} style={[styles.button, styles.sendButton]}>
-        Send Invoice
-      </Button>
-
-      <Portal>
-        <Modal visible={confirmVisible} onDismiss={() => setConfirmVisible(false)} contentContainerStyle={styles.modal}>
-          <Text variant='titleLarge' style={styles.modalTitle}>Confirm Send</Text>
-          <Divider style={styles.modalDivider} />
-
-          <Text variant='labelLarge' style={styles.modalLabel}>Invoice</Text>
-          <Text>#{invoice.invoice_number}</Text>
-
-          <Text variant='labelLarge' style={styles.modalLabel}>To</Text>
+        <View style={styles.section}>
+          <Text variant='titleSmall'>Bill To</Text>
           <Text>{client?.company_name}</Text>
-          <Text style={styles.modalSub}>{client?.email}</Text>
+          <Text>{client?.address}</Text>
+          <Text>{client?.email}</Text>
+        </View>
 
-          <Text variant='labelLarge' style={styles.modalLabel}>Amount</Text>
-          <Text variant='titleMedium' style={styles.modalAmount}>${Number(invoice.total).toFixed(2)}</Text>
-
-          <Text variant='labelLarge' style={styles.modalLabel}>Items</Text>
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>Date</DataTable.Title>
+            <DataTable.Title>Task</DataTable.Title>
+            <DataTable.Title numeric>Hours</DataTable.Title>
+            <DataTable.Title numeric>Rate</DataTable.Title>
+            <DataTable.Title numeric>Total</DataTable.Title>
+          </DataTable.Header>
           {lineItems.map(item => (
-            <Text key={item.id} style={styles.modalItem}>
-              - {item.task || item.description} ({item.hours}h x ${Number(item.rate).toFixed(2)})
-            </Text>
+            <DataTable.Row key={item.id}>
+              <DataTable.Cell>{item.date}</DataTable.Cell>
+              <DataTable.Cell>{item.task}{item.description ? `\n${item.description}` : ''}</DataTable.Cell>
+              <DataTable.Cell numeric>{item.hours}</DataTable.Cell>
+              <DataTable.Cell numeric>${Number(item.rate).toFixed(2)}</DataTable.Cell>
+              <DataTable.Cell numeric>${Number(item.total).toFixed(2)}</DataTable.Cell>
+            </DataTable.Row>
           ))}
+        </DataTable>
 
-          <Divider style={styles.modalDivider} />
+        <View style={styles.totals}>
+          <Text>Subtotal: ${Number(invoice.subtotal).toFixed(2)}</Text>
+          <Text>GST (10%): ${Number(invoice.tax).toFixed(2)}</Text>
+          <Text variant='titleLarge' style={styles.totalText}>Total: ${Number(invoice.total).toFixed(2)}</Text>
+        </View>
 
-          <Text variant='bodySmall' style={styles.modalNote}>
-            This will generate a PDF and open your share sheet. The invoice status will be marked as "sent".
-          </Text>
+        <Button mode='contained' icon='file-pdf-box' onPress={handleGeneratePdf} style={styles.button}>
+          Generate PDF
+        </Button>
 
-          <View style={styles.modalActions}>
-            <Button mode='outlined' onPress={() => setConfirmVisible(false)} style={styles.modalBtn}>Cancel</Button>
-            <Button mode='contained' onPress={handleSendInvoice} loading={sending} style={styles.modalBtn}>Confirm & Send</Button>
-          </View>
-        </Modal>
-      </Portal>
-    </ScrollView>
+        <Button mode='contained' icon='send' onPress={() => setConfirmVisible(true)} style={[styles.button, styles.sendButton]}>
+          Send Invoice
+        </Button>
+
+        <Portal>
+          <Modal visible={confirmVisible} onDismiss={() => setConfirmVisible(false)} contentContainerStyle={styles.modal}>
+            <Text variant='titleLarge' style={styles.modalTitle}>Confirm Send</Text>
+            <Divider style={styles.modalDivider} />
+
+            <Text variant='labelLarge' style={styles.modalLabel}>Invoice</Text>
+            <Text>#{invoice.invoice_number}</Text>
+
+            <Text variant='labelLarge' style={styles.modalLabel}>To</Text>
+            <Text>{client?.company_name}</Text>
+            <Text style={styles.modalSub}>{client?.email}</Text>
+
+            <Text variant='labelLarge' style={styles.modalLabel}>Amount</Text>
+            <Text variant='titleMedium' style={styles.modalAmount}>${Number(invoice.total).toFixed(2)}</Text>
+
+            <Text variant='labelLarge' style={styles.modalLabel}>Items</Text>
+            {lineItems.map(item => (
+              <Text key={item.id} style={styles.modalItem}>
+                - {item.task || item.description} ({item.hours}h x ${Number(item.rate).toFixed(2)})
+              </Text>
+            ))}
+
+            <Divider style={styles.modalDivider} />
+
+            <Text variant='bodySmall' style={styles.modalNote}>
+              This will generate a PDF and open your share sheet. The invoice status will be marked as "sent".
+            </Text>
+
+            <View style={styles.modalActions}>
+              <Button mode='outlined' onPress={() => setConfirmVisible(false)} style={styles.modalBtn}>Cancel</Button>
+              <Button mode='contained' onPress={handleSendInvoice} loading={sending} style={styles.modalBtn}>Confirm & Send</Button>
+            </View>
+          </Modal>
+        </Portal>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 
