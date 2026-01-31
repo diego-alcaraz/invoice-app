@@ -6,11 +6,8 @@ import { PaperProvider, MD3LightTheme } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { StripeProvider } from '@stripe/stripe-react-native'
-import { STRIPE_PUBLISHABLE_KEY } from './src/lib/stripe'
 import { AuthProvider, useAuth } from './src/context/AuthContext'
 import LoginScreen from './src/components/Login'
-import SubscriptionScreen from './src/screens/SubscriptionScreen'
 import HomeScreen from './src/screens/HomeScreen'
 import ProfileScreen from './src/screens/ProfileScreen'
 import InvoiceStack from './src/navigation/InvoiceStack'
@@ -73,7 +70,7 @@ function MainTabs () {
 }
 
 function RootNavigator () {
-  const { session, loading, subscriptionStatus } = useAuth()
+  const { session, loading } = useAuth()
 
   if (loading) {
     return (
@@ -91,28 +88,27 @@ function RootNavigator () {
     )
   }
 
-  if (subscriptionStatus !== 'trialing' && subscriptionStatus !== 'active') {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#111' }}>
-        <SubscriptionScreen />
-      </SafeAreaView>
-    )
-  }
+  // TODO: re-enable subscription gate when Stripe is configured
+  // if (subscriptionStatus !== 'trialing' && subscriptionStatus !== 'active') {
+  //   return (
+  //     <SafeAreaView style={{ flex: 1, backgroundColor: '#111' }}>
+  //       <SubscriptionScreen />
+  //     </SafeAreaView>
+  //   )
+  // }
 
   return <MainTabs />
 }
 
 export default function App () {
   return (
-    <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-      <NavigationContainer>
-        <PaperProvider theme={theme}>
-          <AuthProvider>
-            <RootNavigator />
-          </AuthProvider>
-        </PaperProvider>
-      </NavigationContainer>
-    </StripeProvider>
+    <NavigationContainer>
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </PaperProvider>
+    </NavigationContainer>
   )
 }
 
