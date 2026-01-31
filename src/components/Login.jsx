@@ -1,57 +1,80 @@
-import * as React from 'react';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { Button, View, Text } from 'react-native';
+import React, { useState } from 'react'
+import { View, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { Button, Text } from 'react-native-paper'
+import * as WebBrowser from 'expo-web-browser'
+import * as AuthSession from 'expo-auth-session'
+import { supabase } from '../lib/supabase'
 
-WebBrowser.maybeCompleteAuthSession();
+WebBrowser.maybeCompleteAuthSession()
 
-export default function LoginScreen() {
-  const [userInfo, setUserInfo] = React.useState(null);
-  
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: 'YOUR_EXPO_CLIENT_ID',
-    iosClientId: 'YOUR_IOS_CLIENT_ID',
-    androidClientId: 'YOUR_ANDROID_CLIENT_ID',
-    webClientId: 'YOUR_WEB_CLIENT_ID',
-  });
+export default function LoginScreen () {
+  const [loading, setLoading] = useState(false)
 
-  React.useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      // You can use authentication.accessToken to make API requests
-      getUserInfo(authentication.accessToken);
-    }
-  }, [response]);
-
-  const getUserInfo = async (token) => {
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
     try {
-      const response = await fetch(
-        'https://www.googleapis.com/userinfo/v2/me',
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      const redirectUri = AuthSession.makeRedirectUri({ useProxy: true })
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUri,
+          skipBrowserRedirect: true
         }
-      );
-      const user = await response.json();
-      setUserInfo(user);
-    } catch (error) {
-      console.log('Error fetching user info: ', error);
+      })
+
+      if (error) {
+        Alert.alert('Error', error.message)
+        setLoading(false)
+        return
+      }
+
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUri)
+
+      if (result.type === 'success') {
+        const url = result.url
+        const params = new URL(url)
+        const fragment = params.hash?.substring(1)
+        const query = new URLSearchParams(fragment || params.search?.substring(1))
+        const accessToken = query.get('access_token')
+        const refreshToken = query.get('refresh_token')
+
+        if (accessToken) {
+          await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          })
+        }
+      }
+    } catch (err) {
+      Alert.alert('Error', err.message)
     }
-  };
+    setLoading(false)
+  }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {userInfo ? (
-        <>
-          <Text>Welcome {userInfo.name}</Text>
-          <Text>Email: {userInfo.email}</Text>
-        </>
-      ) : (
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={styles.inner}>
+        <Text variant='headlineLarge' style={styles.title}>InvoiceApp</Text>
+        <Text variant='bodyMedium' style={styles.subtitle}>Track invoices, clients, and get paid faster.</Text>
         <Button
-          title="Sign in with Google"
-          disabled={!request}
-          onPress={() => promptAsync()}
-        />
-      )}
-    </View>
-  );
+          mode='contained'
+          icon='google'
+          onPress={handleGoogleSignIn}
+          loading={loading}
+          style={styles.button}
+        >
+          Sign in with Google
+        </Button>
+      </View>
+    </KeyboardAvoidingView>
+  )
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#111' },
+  inner: { flex: 1, justifyContent: 'center', padding: 24 },
+  title: { textAlign: 'center', marginBottom: 8, fontWeight: 'bold', color: '#c9a84c' },
+  subtitle: { textAlign: 'center', marginBottom: 32, color: '#999' },
+  button: { marginTop: 8 }
+})

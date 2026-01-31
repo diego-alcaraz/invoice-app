@@ -1,100 +1,111 @@
-import React from 'react';
-import { StyleSheet, View, Text,Dimensions,StatusBar, FlatListComponent, ViewBase } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PaperProvider } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React from 'react'
+import { StyleSheet, View, ActivityIndicator } from 'react-native'
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { PaperProvider, MD3LightTheme } from 'react-native-paper'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import AppBar from './src/components/AppBar';
-import HomeScreen from './src/screens/HomeScreen';
-import InvoiceScreen from './src/screens/InvoiceScreen';
+import { AuthProvider, useAuth } from './src/context/AuthContext'
+import LoginScreen from './src/components/Login'
+import HomeScreen from './src/screens/HomeScreen'
+import ProfileScreen from './src/screens/ProfileScreen'
+import InvoiceStack from './src/navigation/InvoiceStack'
+import ClientsStack from './src/navigation/ClientsStack'
 
-import LoginScreen from './src/components/Login';
-
-
-
-
-const Tab = createBottomTabNavigator();
-
-// Example screen components - replace these with your actual screens
-const Home = () => (
-  <View style={{...styles.container, backgroundColor: 'lighgray'}}>
-    <HomeScreen/>
-  </View>
-);
-
-const ProfileScreen = () => (
-  <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      <LoginScreen/>
-    </View>
-  </SafeAreaView>
-);
-
-const DetailsScreen = () => (
-  <SafeAreaView style={styles.safeArea}>
-    <View>
-        <InvoiceScreen/>
-    </View>
-  </SafeAreaView>
-);
-
-const SettingsScreen = () => (
-  <SafeAreaView style={styles.safeArea}> 
-    <View style={{flex:1, backgroundColor: 'gray'}}>
-
-      <View style={{...styles.container, backgroundColor: 'orange'}}>
-        <Text> Setting Screen 1 Top</Text>
-      </View>
-
-      <View style={{flex:1, flexDirection: 'row'}}>
-        <View style={{...styles.container, flex:2, backgroundColor:'lightblue'}}>
-          <Text> Setting Screen 1 Bottom</Text>
-        </View>
-        <View style={{...styles.container, flex:1, backgroundColor: 'lightgreen'}}>
-          <Text> Setting Screen 2 Bottom</Text>
-        </View>
-      </View>
-
-    </View>
-  </SafeAreaView>
-);
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <PaperProvider>
-        <Tab.Navigator
-          tabBar={props => <AppBar {...props} />}
-          screenOptions={{
-            headerShown: false // This hides the default header
-          }}
-        >
-          <Tab.Screen name="Home" component={Home} />
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-          <Tab.Screen name="Details" component={DetailsScreen} />
-          <Tab.Screen name="Settings" component={SettingsScreen} />
-        </Tab.Navigator>
-      </PaperProvider>
-    </NavigationContainer>
-  );
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#c9a84c',
+    primaryContainer: '#3a2f1a',
+    secondary: '#c9a84c',
+    secondaryContainer: '#2a2a2a',
+    surface: '#1a1a1a',
+    background: '#111111',
+    onSurface: '#f0e6d0',
+    onBackground: '#f0e6d0',
+    onPrimary: '#1a1a1a',
+    outline: '#555',
+    elevation: {
+      level0: 'transparent',
+      level1: '#1e1e1e',
+      level2: '#222222',
+      level3: '#262626',
+      level4: '#2a2a2a',
+      level5: '#2e2e2e'
+    }
+  }
 }
 
+const Tab = createBottomTabNavigator()
+
+function MainTabs () {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: '#c9a84c',
+        tabBarInactiveTintColor: '#666',
+        tabBarStyle: { paddingBottom: 6, paddingTop: 4, height: 56, backgroundColor: '#1a1a1a', borderTopColor: '#333' },
+        tabBarIcon: ({ color, size }) => {
+          const icons = {
+            Home: 'home',
+            Invoices: 'file-document-outline',
+            Clients: 'domain',
+            Profile: 'account'
+          }
+          return <MaterialCommunityIcons name={icons[route.name]} size={size} color={color} />
+        }
+      })}
+    >
+      <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='Invoices' component={InvoiceStack} />
+      <Tab.Screen name='Clients' component={ClientsStack} />
+      <Tab.Screen name='Profile' component={ProfileScreen} />
+    </Tab.Navigator>
+  )
+}
+
+function RootNavigator () {
+  const { session, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size='large' color='#c9a84c' />
+      </View>
+    )
+  }
+
+  if (!session) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#111' }}>
+        <LoginScreen />
+      </SafeAreaView>
+    )
+  }
+
+  return <MainTabs />
+}
+
+export default function App () {
+  return (
+    <NavigationContainer>
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </PaperProvider>
+    </NavigationContainer>
+  )
+}
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    padding:10,
-  },
-  container: {
+  center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'lightblue',
-  },
-  centrar : {
-    flex: 1,
-    justifyContent: 'center', 
-    alignItems: 'center'
-  },
-});
+    backgroundColor: '#111'
+  }
+})
