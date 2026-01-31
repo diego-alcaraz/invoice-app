@@ -42,8 +42,10 @@ export function AuthProvider ({ children }) {
     await supabase.auth.signOut()
   }
 
+  const subscriptionStatus = profile?.subscription_status || 'none'
+
   return (
-    <AuthContext.Provider value={{ session, user, profile, loading, fetchProfile, signOut }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, fetchProfile, signOut, subscriptionStatus }}>
       {children}
     </AuthContext.Provider>
   )

@@ -39,7 +39,8 @@
       "url": "https://u.expo.dev/2c91f850-0838-408d-ab4b-d7dd6d6ad073"
     },
     "plugins": [
-      "expo-web-browser"
+      "expo-web-browser",
+      "@stripe/stripe-react-native"
     ]
   }
 }
