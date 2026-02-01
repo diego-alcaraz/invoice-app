@@ -218,7 +218,7 @@ export default function InvoiceFormScreen ({ navigation, route }) {
         <Text variant='headlineMedium' style={styles.title}>{editInvoiceId ? 'Edit Invoice' : 'New Invoice'}</Text>
         <Formik
           enableReinitialize
-          initialValues={editInitialValues || { client_id: '', client_name: '', invoice_number: nextInvoiceNumber, include_gst: true, items: [{ date: '', task: '', description: '', start_hour: defaultStartHour, end_hour: defaultEndHour, break_time: defaultBreakTime, rate: defaultRate }] }}
+          initialValues={editInitialValues || { client_id: '', client_name: '', invoice_number: nextInvoiceNumber, include_gst: false, items: [{ date: '', task: '', description: '', start_hour: defaultStartHour, end_hour: defaultEndHour, break_time: defaultBreakTime, rate: defaultRate }] }}
           onSubmit={handleSave}
         >
           {({ handleChange, handleSubmit, values, setFieldValue }) => {

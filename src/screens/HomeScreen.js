@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext'
 export default function HomeScreen () {
   const { user, profile } = useAuth()
   const navigation = useNavigation()
-  const [stats, setStats] = useState({ totalEarned: 0, pending: 0, clients: 0 })
+  const [stats, setStats] = useState({ totalEarned: 0, drafts: 0, sent: 0, clients: 0 })
   const [recentInvoices, setRecentInvoices] = useState([])
 
   useFocusEffect(
@@ -27,14 +27,15 @@ export default function HomeScreen () {
 
     const all = invoices || []
     const totalEarned = all.reduce((sum, i) => sum + Number(i.total || 0), 0)
-    const pending = all.filter(i => i.status === 'draft').length
+    const drafts = all.filter(i => i.status === 'draft').length
+    const sent = all.filter(i => i.status === 'sent').length
 
     const { count: clientCount } = await supabase
       .from('clients')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
 
-    setStats({ totalEarned, pending, clients: clientCount || 0 })
+    setStats({ totalEarned, drafts, sent, clients: clientCount || 0 })
     setRecentInvoices(all.slice(0, 5))
   }
 
@@ -43,23 +44,30 @@ export default function HomeScreen () {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
     <ScrollView contentContainerStyle={styles.content}>
-      <Text variant='headlineMedium' style={styles.greeting}>Hey {firstName} 👋</Text>
+      <Text variant='headlineMedium' style={styles.greeting}>Hey {firstName}</Text>
       <Text variant='bodyMedium' style={styles.subtitle}>Here's your overview</Text>
 
+      <Card style={styles.earnedCard}>
+        <Card.Content>
+          <Text variant='headlineMedium' style={styles.earnedNumber}>${stats.totalEarned.toFixed(2)}</Text>
+          <Text variant='bodySmall' style={styles.statLabel}>Total Earned</Text>
+        </Card.Content>
+      </Card>
+
       <View style={styles.statsRow}>
-        <Card style={[styles.statCard, { backgroundColor: '#1e1e1e', borderColor: '#c9a84c', borderWidth: 1 }]}>
+        <Card style={styles.statCard}>
           <Card.Content>
-            <Text variant='titleLarge' style={styles.statNumber}>${stats.totalEarned.toFixed(2)}</Text>
-            <Text variant='bodySmall' style={styles.statLabel}>Total Earned</Text>
+            <Text variant='titleLarge' style={styles.statNumber}>{stats.drafts}</Text>
+            <Text variant='bodySmall' style={styles.statLabel}>Drafts</Text>
           </Card.Content>
         </Card>
-        <Card style={[styles.statCard, { backgroundColor: '#1e1e1e', borderColor: '#c9a84c', borderWidth: 1 }]}>
+        <Card style={styles.statCard}>
           <Card.Content>
-            <Text variant='titleLarge' style={styles.statNumber}>{stats.pending}</Text>
-            <Text variant='bodySmall' style={styles.statLabel}>Draft Invoices</Text>
+            <Text variant='titleLarge' style={styles.statNumber}>{stats.sent}</Text>
+            <Text variant='bodySmall' style={styles.statLabel}>Sent</Text>
           </Card.Content>
         </Card>
-        <Card style={[styles.statCard, { backgroundColor: '#1e1e1e', borderColor: '#c9a84c', borderWidth: 1 }]}>
+        <Card style={styles.statCard}>
           <Card.Content>
             <Text variant='titleLarge' style={styles.statNumber}>{stats.clients}</Text>
             <Text variant='bodySmall' style={styles.statLabel}>Clients</Text>
@@ -116,8 +124,10 @@ const styles = StyleSheet.create({
   content: { padding: 20, paddingBottom: 40 },
   greeting: { fontWeight: 'bold', marginBottom: 4, color: '#c9a84c' },
   subtitle: { color: '#999', marginBottom: 20 },
+  earnedCard: { borderRadius: 12, elevation: 0, backgroundColor: '#1e1e1e', borderColor: '#c9a84c', borderWidth: 1, marginBottom: 10 },
+  earnedNumber: { fontWeight: 'bold', textAlign: 'center', color: '#c9a84c' },
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
-  statCard: { flex: 1, borderRadius: 12, elevation: 0 },
+  statCard: { flex: 1, borderRadius: 12, elevation: 0, backgroundColor: '#1e1e1e', borderColor: '#c9a84c', borderWidth: 1 },
   statNumber: { fontWeight: 'bold', textAlign: 'center', color: '#c9a84c' },
   statLabel: { textAlign: 'center', color: '#bbb', marginTop: 4 },
   actions: { flexDirection: 'row', gap: 12, marginBottom: 20 },
