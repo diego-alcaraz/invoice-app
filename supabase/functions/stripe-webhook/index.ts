@@ -44,23 +44,30 @@ serve(async (req) => {
         ? new Date(subscription.trial_end * 1000).toISOString()
         : null
 
-      // If we have a customer but no profile match yet, try matching by email
+      // Check if a profile already has this stripe_customer_id
       const { data: existing } = await supabase
         .from('profiles')
         .select('id')
         .eq('stripe_customer_id', customerId)
         .single()
 
-      if (!existing && session.customer_email) {
-        // Match by email and set the stripe_customer_id
-        await supabase
-          .from('profiles')
-          .update({
-            stripe_customer_id: customerId,
-            subscription_status: subscription.status,
-            trial_ends_at: trialEnd,
-          })
-          .eq('email', session.customer_email)
+      if (!existing) {
+        // No profile linked yet — match by email from session or Stripe customer
+        let email = session.customer_email
+        if (!email) {
+          const customer = await stripe.customers.retrieve(customerId)
+          if (!customer.deleted) email = customer.email
+        }
+        if (email) {
+          await supabase
+            .from('profiles')
+            .update({
+              stripe_customer_id: customerId,
+              subscription_status: subscription.status,
+              trial_ends_at: trialEnd,
+            })
+            .eq('email', email)
+        }
       } else {
         await updateProfile(customerId, {
           subscription_status: subscription.status,
