@@ -7,7 +7,9 @@ import { supabase } from '../lib/supabase'
 
 WebBrowser.maybeCompleteAuthSession()
 
-const redirectUri = makeRedirectUri()
+const redirectUri = Platform.OS === 'web'
+  ? 'https://diego-alcaraz.github.io/invoice-app/'
+  : makeRedirectUri()
 
 export default function LoginScreen () {
   const [loading, setLoading] = useState(false)
@@ -15,6 +17,18 @@ export default function LoginScreen () {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
+      if (Platform.OS === 'web') {
+        // On web, do a full redirect (no popup)
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: redirectUri }
+        })
+        if (error) Alert.alert('Error', error.message)
+        // Page will redirect, no need to setLoading(false)
+        return
+      }
+
+      // Native: use in-app browser
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

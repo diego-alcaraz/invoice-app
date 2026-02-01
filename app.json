@@ -15,7 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.diegozapata0804.invoiceapp"
+      "bundleIdentifier": "com.diegozapata0804.invoiceapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +28,10 @@
       "package": "com.diegozapata0804.invoiceapp"
     },
     "web": {
-      "favicon": "./assets/LogoM.png"
+      "favicon": "./assets/LogoM.png",
+      "bundler": "metro",
+      "output": "single",
+      "baseUrl": "/invoice-app"
     },
     "extra": {
       "eas": {

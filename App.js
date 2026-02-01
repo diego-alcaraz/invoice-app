@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { PaperProvider, MD3LightTheme } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { AuthProvider, useAuth } from './src/context/AuthContext'
 import LoginScreen from './src/components/Login'
