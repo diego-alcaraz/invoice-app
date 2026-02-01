@@ -49,7 +49,8 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.37.3"
+    "eslint-plugin-react": "^7.37.3",
+    "typescript": "~5.9.2"
   },
   "private": true,
   "eslintConfig": {

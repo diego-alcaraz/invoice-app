@@ -18,6 +18,8 @@ export default function InvoicePreviewScreen ({ route, navigation }) {
   const [client, setClient] = useState(null)
   const [confirmVisible, setConfirmVisible] = useState(false)
   const [sending, setSending] = useState(false)
+  const [deleteVisible, setDeleteVisible] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     loadInvoice()
@@ -118,6 +120,18 @@ ${profile?.email || ''}`
     }
   }
 
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await supabase.from('line_items').delete().eq('invoice_id', invoice.id)
+      await supabase.from('invoices').delete().eq('id', invoice.id)
+      navigation.goBack()
+    } catch (e) {
+      Alert.alert('Error', e.message)
+      setDeleting(false)
+    }
+  }
+
   if (!invoice) {
     return <View style={styles.center}><Text>Loading...</Text></View>
   }
@@ -172,6 +186,10 @@ ${profile?.email || ''}`
           Send Invoice
         </Button>
 
+        <Button mode='outlined' icon='delete' onPress={() => setDeleteVisible(true)} style={[styles.button, styles.deleteButton]} textColor='#e74c3c'>
+          Delete Invoice
+        </Button>
+
         <Portal>
           <Modal visible={confirmVisible} onDismiss={() => setConfirmVisible(false)} contentContainerStyle={styles.modal}>
             <Text variant='titleLarge' style={styles.modalTitle}>Confirm Send</Text>
@@ -207,6 +225,15 @@ ${profile?.email || ''}`
               <Button mode='contained' onPress={handleSendInvoice} loading={sending} style={styles.modalBtn}>Confirm & Send</Button>
             </View>
           </Modal>
+          <Modal visible={deleteVisible} onDismiss={() => setDeleteVisible(false)} contentContainerStyle={styles.modal}>
+            <Text variant='titleLarge' style={[styles.modalTitle, { color: '#e74c3c' }]}>Delete Invoice</Text>
+            <Divider style={styles.modalDivider} />
+            <Text>Are you sure you want to delete Invoice #{invoice.invoice_number}? This action cannot be undone.</Text>
+            <View style={styles.modalActions}>
+              <Button mode='outlined' onPress={() => setDeleteVisible(false)} style={styles.modalBtn}>Cancel</Button>
+              <Button mode='contained' onPress={handleDelete} loading={deleting} buttonColor='#e74c3c' style={styles.modalBtn}>Delete</Button>
+            </View>
+          </Modal>
         </Portal>
       </ScrollView>
     </SafeAreaView>
@@ -225,6 +252,7 @@ const styles = StyleSheet.create({
   totalText: { fontWeight: 'bold', marginTop: 8, color: '#c9a84c' },
   button: { marginTop: 12 },
   sendButton: { backgroundColor: '#c9a84c' },
+  deleteButton: { marginTop: 24, borderColor: '#e74c3c' },
   modal: { backgroundColor: '#1e1e1e', margin: 20, borderRadius: 12, padding: 24, borderColor: '#c9a84c', borderWidth: 1 },
   modalTitle: { fontWeight: 'bold', marginBottom: 8, color: '#c9a84c' },
   modalDivider: { marginVertical: 12, backgroundColor: '#333' },

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, ActivityIndicator, Image } from 'react-native'
+import { StyleSheet, View, ActivityIndicator, Image, Platform } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { PaperProvider, MD3LightTheme } from 'react-native-paper'
@@ -12,6 +12,13 @@ import HomeScreen from './src/screens/HomeScreen'
 import ProfileScreen from './src/screens/ProfileScreen'
 import InvoiceStack from './src/navigation/InvoiceStack'
 import ClientsStack from './src/navigation/ClientsStack'
+import SubscriptionScreen from './src/screens/SubscriptionScreen'
+import { STRIPE_PUBLISHABLE_KEY } from './src/lib/stripe'
+
+let StripeProvider = null
+if (Platform.OS !== 'web') {
+  StripeProvider = require('@stripe/stripe-react-native').StripeProvider
+}
 
 const theme = {
   ...MD3LightTheme,
@@ -70,7 +77,7 @@ function MainTabs () {
 }
 
 function RootNavigator () {
-  const { session, loading } = useAuth()
+  const { session, loading, subscriptionStatus } = useAuth()
 
   if (loading) {
     return (
@@ -88,19 +95,18 @@ function RootNavigator () {
     )
   }
 
-  // TODO: re-enable subscription gate when Stripe is configured
-  // if (subscriptionStatus !== 'trialing' && subscriptionStatus !== 'active') {
-  //   return (
-  //     <SafeAreaView style={{ flex: 1, backgroundColor: '#111' }}>
-  //       <SubscriptionScreen />
-  //     </SafeAreaView>
-  //   )
-  // }
+  if (subscriptionStatus !== 'trialing' && subscriptionStatus !== 'active') {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#111' }}>
+        <SubscriptionScreen />
+      </SafeAreaView>
+    )
+  }
 
   return <MainTabs />
 }
 
-export default function App () {
+function AppContent () {
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>
@@ -110,6 +116,17 @@ export default function App () {
       </PaperProvider>
     </NavigationContainer>
   )
+}
+
+export default function App () {
+  if (StripeProvider) {
+    return (
+      <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+        <AppContent />
+      </StripeProvider>
+    )
+  }
+  return <AppContent />
 }
 
 const styles = StyleSheet.create({
