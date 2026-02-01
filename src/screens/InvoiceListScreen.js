@@ -30,7 +30,15 @@ export default function InvoiceListScreen ({ navigation }) {
       title={`#${item.invoice_number}`}
       description={`${item.clients?.company_name || 'Unknown'} — $${Number(item.total).toFixed(2)}`}
       left={props => <List.Icon {...props} icon='file-document-outline' />}
-      right={() => <Chip compact>{item.status}</Chip>}
+      right={() => (
+        <Chip
+          compact
+          style={{ backgroundColor: item.status === 'sent' ? '#2e7d32' : item.status === 'draft' ? '#e6a817' : '#555' }}
+          textStyle={{ color: '#fff', fontSize: 12 }}
+        >
+          {item.status}
+        </Chip>
+      )}
       onPress={() => navigation.navigate('InvoicePreview', { invoiceId: item.id })}
     />
   )

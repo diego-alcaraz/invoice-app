@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "invoice-app",
+    "name": "InvoiceApp",
     "slug": "invoice-app",
     "scheme": "invoiceapp",
     "version": "1.0.0",

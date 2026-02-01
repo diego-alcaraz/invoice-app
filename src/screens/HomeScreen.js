@@ -71,7 +71,7 @@ export default function HomeScreen () {
         <Button
           mode='contained'
           icon='plus'
-          onPress={() => navigation.getParent()?.navigate('Invoices', { screen: 'InvoiceForm' })}
+          onPress={() => navigation.navigate('Invoices', { screen: 'InvoiceForm' })}
           style={styles.actionBtn}
         >
           New Invoice
@@ -79,7 +79,7 @@ export default function HomeScreen () {
         <Button
           mode='outlined'
           icon='account-plus'
-          onPress={() => navigation.getParent()?.navigate('Clients', { screen: 'ClientForm' })}
+          onPress={() => navigation.navigate('Clients', { screen: 'ClientForm' })}
           style={styles.actionBtn}
         >
           Add Client
@@ -92,7 +92,7 @@ export default function HomeScreen () {
       {recentInvoices.length === 0
         ? <Text style={styles.empty}>No invoices yet. Create your first one!</Text>
         : recentInvoices.map(inv => (
-          <Card key={inv.id} style={styles.invoiceCard} onPress={() => navigation.getParent()?.navigate('Invoices', { screen: 'InvoicePreview', params: { invoiceId: inv.id } })}>
+          <Card key={inv.id} style={styles.invoiceCard} onPress={() => navigation.navigate('Invoices', { screen: 'InvoiceForm', params: { invoiceId: inv.id } })}>
             <Card.Content style={styles.invoiceRow}>
               <View>
                 <Text variant='titleSmall'>#{inv.invoice_number || '—'}</Text>
