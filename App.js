@@ -1,10 +1,11 @@
-import React from 'react'
-import { StyleSheet, View, ActivityIndicator, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, View, ActivityIndicator, Image, Platform } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { PaperProvider, MD3LightTheme } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import * as Font from 'expo-font'
 
 import { AuthProvider, useAuth } from './src/context/AuthContext'
 import LoginScreen from './src/components/Login'
@@ -92,6 +93,28 @@ function RootNavigator () {
 }
 
 export default function App () {
+  const [fontsLoaded, setFontsLoaded] = useState(false)
+
+  useEffect(() => {
+    async function loadFonts () {
+      if (Platform.OS === 'web') {
+        await Font.loadAsync({
+          ...MaterialCommunityIcons.font
+        })
+      }
+      setFontsLoaded(true)
+    }
+    loadFonts()
+  }, [])
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size='large' color='#c9a84c' />
+      </View>
+    )
+  }
+
   return (
     <NavigationContainer>
       <PaperProvider theme={theme}>

@@ -20,6 +20,7 @@
     "expo-auth-session": "~7.0.10",
     "expo-checkbox": "~5.0.8",
     "expo-cli": "^6.3.12",
+    "expo-font": "~13.0.1",
     "expo-print": "~15.0.8",
     "expo-random": "^14.0.1",
     "expo-sharing": "~14.0.8",
