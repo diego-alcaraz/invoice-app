@@ -44,7 +44,6 @@ serve(async (req) => {
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: PRICE_ID, quantity: 1 }],
-      subscription_data: { trial_period_days: 15 },
       success_url: return_url || 'https://diego-alcaraz.github.io/invoice-app/',
       cancel_url: return_url || 'https://diego-alcaraz.github.io/invoice-app/',
       metadata: { user_id },

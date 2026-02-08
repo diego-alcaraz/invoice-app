@@ -39,15 +39,12 @@ export default function SubscriptionScreen () {
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>InvoiceApp Pro</Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>15-day free trial</Text>
-        </View>
         <Text style={styles.price}>$10 AUD / month</Text>
         <Text style={styles.desc}>
-          Full access to invoicing, client management, and PDF exports. Your card will be charged after the trial ends.
+          Full access to invoicing, client management, and PDF exports.
         </Text>
         <Button mode='contained' style={styles.button} labelStyle={styles.buttonLabel} onPress={handleCheckout} disabled={polling}>
-          {polling ? 'Waiting for payment...' : 'Start Free Trial'}
+          {polling ? 'Waiting for payment...' : 'Subscribe Now'}
         </Button>
         {polling && (
           <Text style={styles.pollText}>
@@ -79,19 +76,6 @@ const styles = StyleSheet.create({
     color: '#c9a84c',
     textAlign: 'center',
     marginBottom: 8
-  },
-  badge: {
-    alignSelf: 'center',
-    backgroundColor: '#c9a84c',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    marginBottom: 12
-  },
-  badgeText: {
-    color: '#1a1a1a',
-    fontWeight: 'bold',
-    fontSize: 13
   },
   price: {
     fontSize: 20,

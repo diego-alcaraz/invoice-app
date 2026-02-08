@@ -33,19 +33,16 @@ serve(async (req) => {
       invoice_settings: { default_payment_method: payment_method_id },
     })
 
-    // Create subscription with 15-day trial
+    // Create subscription
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [{ price: PRICE_ID }],
-      trial_period_days: 15,
       expand: ['latest_invoice.payment_intent'],
     })
 
     // Update profile
-    const trialEnd = new Date(subscription.trial_end! * 1000).toISOString()
     await supabase.from('profiles').update({
       subscription_status: subscription.status,
-      trial_ends_at: trialEnd,
       stripe_customer_id: customer.id,
     }).eq('id', user_id)
 
